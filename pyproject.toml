@@ -8,5 +8,6 @@ dependencies = [
     "googletrans>=4.0.2",
     "seaborn>=0.13.2",
     "streamlit>=1.51.0",
+    "streamlit-image-button>=0.2.2.13",
     "streamlit-option-menu>=0.4.0",
 ]
