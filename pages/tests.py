@@ -4,7 +4,7 @@ st.set_page_config(layout="wide")
 # Custom HTML/CSS for the banner
 custom_html = """
 <div class="banner">
-    <img src="https://media.discordapp.net/attachments/1437456002575372453/1447955495053693174/banner.png?ex=693a29e3&is=6938d863&hm=3003c5f15f89bf43ebcead769f68aa2d9629268e24f41c645dca1d035e994cdb&=&format=webp&quality=lossless&width=1066&height=312" alt="Banner Image">
+    <img src="https://media.discordapp.net/attachments/1437456002575372453/1447955495053693174/banner.png?ex=693ccce3&is=693b7b63&hm=4842a8eccea3026c64aea0244b9c17326dbd8e9b16dafc650da0cacf2a054441&=&format=webp&quality=lossless&width=1066&height=312" alt="Banner Image">
 </div>
 <style>
     .banner {
