@@ -20,11 +20,11 @@ df = pd.read_csv("~/Documents/WCS/VSC/dossier_projets/Projet_2/projet_recommanda
 # Liste déroulante pour choisir un film 
 movie_list = df['primaryTitle'].sort_values().values
 chosen_movie = st.selectbox("Sélectionnez un film", movie_list, index= None , placeholder = "Aucun film sélectionné",)
-chosen_poster = df[df["primaryTitle"]==chosen_movie]["poster_path"].reset_index()["poster_path"].iloc[0]
+
 
 # 4. FONCTION DE RECOMMANDATION
 if st.button('Recommander',width = "stretch", type= "primary"):
-
+    chosen_poster = df[df["primaryTitle"]==chosen_movie]["poster_path"].reset_index()["poster_path"].iloc[0]
     # récupération des images et index des films recommandés
     sample = df.sample(6)
     list_index = list(sample.index)
