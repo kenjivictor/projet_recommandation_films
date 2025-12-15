@@ -2,11 +2,7 @@ import streamlit as st
 import pandas as pd
 from functions import movie_frame as mf
 
-if ["clicked"] not in st.session_state:
-    st.session_state.button_clicked = False 
 
-def callback():
-    st.session_state.clicked = True
     
 id = None
 # CONFIGURATION DE LA PAGE
@@ -77,6 +73,6 @@ try:
 except:
     st.write("Découvrez maintenant plusieurs miliers de films basés sur vos préférences, en seulement quelques clicks. \nN'attendez pas, lancez votre recherche maintenant!\nEn attendant voici les dernières nouveautés:(rajouter les films les plus récents pour avoir un visual intéressant)")
 
-if st.session_state["clicked"] == True and id != None :
+if id != None :
     mf.movie_frame(id)
 
