@@ -1017,7 +1017,6 @@ dependencies = [
     { name = "st-clickable-images" },
     { name = "streamlit" },
     { name = "streamlit-authenticator" },
-    { name = "streamlit-image-button" },
     { name = "streamlit-option-menu" },
 ]
 
@@ -1028,7 +1027,6 @@ requires-dist = [
     { name = "st-clickable-images", specifier = ">=0.0.3" },
     { name = "streamlit", specifier = ">=1.51.0" },
     { name = "streamlit-authenticator", specifier = ">=0.4.2" },
-    { name = "streamlit-image-button", specifier = ">=0.2.2.13" },
     { name = "streamlit-option-menu", specifier = ">=0.4.0" },
 ]
 
@@ -1381,11 +1379,6 @@ dependencies = [
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/83/47/837b158e1a5b0d187d20c6be22c46d84d12a8d3e8d7113b67ebb33e221c9/streamlit_authenticator-0.4.2-py3-none-any.whl", hash = "sha256:442acccef6af65e2b0feb15d5e9f68707f204c1d31c60673690d87179c7ca5b2", size = 43197, upload-time = "2025-03-01T20:36:07.566Z" },
-name = "streamlit-image-button"
-version = "0.2.2.13"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "streamlit" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7f/a2/d3be060c6be69e06c232bd8690c331c6548c6264b092233534173e5b8000/streamlit_image_button-0.2.2.13.tar.gz", hash = "sha256:1e4dd442b3f1fded48de221c3b962307230aec2a19492b82a6e33acf00111f51", size = 536701, upload-time = "2023-11-13T15:35:32.375Z" }
 wheels = [
