@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "seaborn>=0.13.2",
+    "st-clickable-images>=0.0.3",
     "streamlit>=1.51.0",
     "streamlit-authenticator>=0.4.2",
     "streamlit-option-menu>=0.4.0",
