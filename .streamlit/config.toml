@@ -1,0 +1,20 @@
+[theme]
+# Couleur primaire (boutons, liens, sélections)
+primaryColor = "#FFFFFF"
+
+# Couleur de fond principale
+backgroundColor = "#1C374B"
+
+# Couleur de fond secondaire (widgets, code blocks)
+secondaryBackgroundColor = "#30495B"
+
+# Couleur du texte
+textColor = "#FFFFFF"
+
+# Police par défaut
+font = "sans serif"
+
+
+[theme.sidebar]
+# Couleur primaire (boutons, liens, sélections)
+primaryColor = "#142735"
