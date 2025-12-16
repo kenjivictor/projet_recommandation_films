@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 from streamlit_authenticator import Authenticate
+import functions.utils as utils
 
 st.set_page_config(page_title="Visus", layout="wide")
 
@@ -44,10 +45,7 @@ st.markdown("""
 
 st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
         
-try:
-    st.image("pages/images/banner.png",  width='stretch')
-except:
-    st.warning("Image bannière introuvable")
+
 st.header("Dashboard Analytique : FilmDataLab")
 sns.set_theme(style="darkgrid")
 
@@ -157,3 +155,5 @@ with tab4:
     fig5.update_xaxes(range=[0, 10]) # Force l'axe de 0 à 10 pour la note
     
     st.plotly_chart(fig5, use_container_width=True)
+    
+    utils.background_header_image()

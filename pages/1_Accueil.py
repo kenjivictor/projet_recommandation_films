@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from st_clickable_images import clickable_images 
 from streamlit_authenticator import Authenticate
+import functions.utils as utils
 
 st.set_page_config(page_title="Accueil", layout="wide")
 
@@ -62,11 +63,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
-        
-try:
-    st.image("pages/images/banner.png",  width='stretch')
-except:
-    st.warning("Image bannière introuvable")
+
 st.subheader("Films à la une (Cliquez sur une affiche pour voir les détails)")
 
 # Films à la une
@@ -85,3 +82,5 @@ if clicked_index > -1:
     film_id = df_sorted.iloc[clicked_index]['movieId']
     st.session_state.selected_movie_id = film_id
     st.switch_page("pages/2_Fiche_Film.py")
+
+utils.background_header_image()

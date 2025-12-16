@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_authenticator import Authenticate
+import functions.utils as utils
 
 st.set_page_config(page_title="Fiche Film", layout="wide")
 
@@ -54,10 +55,7 @@ st.markdown("""
 
 st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
         
-try:
-    st.image("pages/images/banner.png",  width='stretch')
-except:
-    st.warning("Image bannière introuvable")
+
 st.subheader("Fiche Film Détaillée")
 
 
@@ -105,3 +103,5 @@ else:
                 st.rerun()
     else:
         st.error("Erreur : Film introuvable avec cet ID.")
+
+utils.background_header_image()

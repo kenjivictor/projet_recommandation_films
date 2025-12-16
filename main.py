@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_authenticator import Authenticate
+import functions.utils as utils
 
 # =========================================================
 # CONFIGURATION
@@ -35,7 +36,17 @@ authenticator = Authenticate(
     30,
 )
 
-authenticator.login('main')
+#titres de la page
+st.html("<h1 id='film-data-lab'>Film Data Lab</h1>")
+st.html("<h2 id='film-data-lab-legend'>Une application de recommandation de films basée sur la data et l'IA.</h2>")
+
+#formulaire d'authentification
+authenticator.login(
+    location = 'main',
+    fields = {'Form name':'Connexion', 'Username':'Utilisateur', 'Password':'Mot de passe','Login':'Connexion', 'Captcha':'Captcha'})
+
+#image de fond sur la page de login
+utils.background_login_image()
 
 # =========================================================
 # REDIRECTION

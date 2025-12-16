@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_authenticator import Authenticate
+import functions.utils as utils
 # Assurez-vous que le fichier functions.py existe bien dans le dossier racine
 try:
     from functions import movie_frame as mf
@@ -46,10 +47,7 @@ st.markdown("""
 
 st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
         
-try:
-    st.image("pages/images/banner.png",  width='stretch')
-except:
-    st.warning("Image bannière introuvable")
+
 st.header("Découvrir")
 #st.title("Découvrir")
 st.write("Entrez un film que vous aimez pour obtenir des recommandations.")
@@ -126,3 +124,5 @@ if id_details is not None:
         mf.movie_frame(id_details)
     else:
         st.warning("Module 'functions.movie_frame' introuvable.")
+        
+utils.background_header_image()
