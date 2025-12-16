@@ -4,36 +4,59 @@ import ast
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-import os
+from streamlit_authenticator import Authenticate
 
-# =========================================================
-# 1. CONFIGURATION
-# =========================================================
-st.set_page_config(
-    page_title="NANTFLIX Analytics",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Visus", layout="wide")
 
-# Thème sombre pour Seaborn (pour les graphiques Matplotlib)
-sns.set_theme(style="darkgrid")
+# AUTHENTIFICATION & SÉCURITÉ
+
+lesDonneesDesComptes = {
+    'usernames': {
+        'utilisateur': {'name':'utilisateur', 'password':'utilisateurMDP', 'email':'user@gmail.com', 'role':'user'},
+        'root': {'name':'root', 'password':'rootMDP', 'email':'admin@gmail.com', 'role':'admin'}
+    }
+}
+
+authenticator = Authenticate(lesDonneesDesComptes, "cookie_name", "cookie_key", 30)
+
+if st.session_state.get("authentication_status") is not True:
+    st.switch_page("main.py")
 
 with st.sidebar:
-    st.header("🍿 NANTFLIX")
-    st.info("Visualisation des données du catalogue.")
+    st.title("Menu")
+    st.write("🎬 Découvrez FilmDataLab")
+    st.divider()
+    authenticator.logout("Déconnexion", "sidebar")
 
-st.title("📊 Dashboard Analytique : NANTFLIX")
 
-# =========================================================
-# 2. CHARGEMENT
-# =========================================================
+# CONTENU PAGE
+
+st.markdown("""
+    <style>
+        /* Cible le conteneur principal de la page */
+        .block-container {
+            /* Met la marge intérieure haute à 0 */
+            padding-top: 0rem !important;
+            padding-bottom: 0rem !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
+        
+try:
+    st.image("pages/images/banner.png",  width='stretch')
+except:
+    st.warning("Image bannière introuvable")
+st.header("Dashboard Analytique : FilmDataLab")
+sns.set_theme(style="darkgrid")
+
 def load_data():
     df = pd.read_csv('db/data_2.csv')
-    
-    # Nettoyage des colonnes contenant des listes (format string -> list)
     cols_to_fix = ['genres', 'actors', 'key_words', 'directors', 'production_countries']
     for col in cols_to_fix:
-        df[col] = df[col].fillna("[]").apply(ast.literal_eval)
+        # On gère le cas où c'est déjà une liste ou un string
+        df[col] = df[col].fillna("[]").apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
     return df
 
 try:
@@ -42,28 +65,17 @@ except FileNotFoundError:
     st.error("❌ Fichier 'data_2.csv' introuvable.")
     st.stop()
 
-# =========================================================
-# 3. INTERFACE (4 ONGLETS)
-# =========================================================
+tab1, tab2, tab3, tab4 = st.tabs(["📈 Stats Globales", "🎭 Genres", "🌍 Origine", "🎬 Réalisateurs"])
 
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📈 Stats Globales", 
-    "🎭 Genres", 
-    "🌍 Origine", 
-    "🎬 Réalisateurs"
-])
-
-# --- TAB 1 : STATS GLOBALES ---
+# TAB 1
 with tab1:
-    st.header("Vue d'ensemble")
+    st.subheader("Vue d'ensemble")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Films", len(df))
     c2.metric("Note Moy.", f"{round(df['averageRating'].mean(), 1)}/10")
     c3.metric("Votes", f"{df['numVotes'].sum():,.0f}".replace(",", " "))
     c4.metric("Année Méd.", int(df['startYear'].median()))
-    
     st.divider()
-    
     c_g1, c_g2 = st.columns(2)
     with c_g1:
         st.subheader("Chronologie")
@@ -80,60 +92,36 @@ with tab1:
         ax2.set_ylabel("")
         st.pyplot(fig2)
 
-# --- TAB 2 : GENRES ---
+# TAB 2
 with tab2:
     st.header("Analyse des Genres")
     df_genres = df.explode('genres')
     counts = df_genres['genres'].value_counts().head(15).reset_index()
     counts.columns = ['Genre', 'Nombre']
-    
-    fig3 = px.bar(counts, x='Nombre', y='Genre', orientation='h', 
-                title="Top 15 Genres", 
-                color='Nombre', 
-                color_continuous_scale='Viridis_r')
+    fig3 = px.bar(counts, x='Nombre', y='Genre', orientation='h', title="Top 15 Genres", color='Nombre', color_continuous_scale='Viridis_r')
     fig3.update_layout(yaxis=dict(autorange="reversed"))
     st.plotly_chart(fig3, use_container_width=True)
 
-# --- TAB 3 : ORIGINE (US/FR/GB/CA vs Autres) ---
+# TAB 3
 with tab3:
     st.header("🌍 Origine Géographique")
-    
     df_countries = df.explode('production_countries')
-    target_countries = ['US', 'FR', 'GB', 'CA']
-    
-    # Fonction de regroupement
-    def group_country(country):
-        if not country or pd.isna(country): return 'Autres'
-        if country in target_countries: return country
-        return 'Autres'
-
-    df_countries['grouped_country'] = df_countries['production_countries'].apply(group_country)
-    
-    final_counts = df_countries['grouped_country'].value_counts().reset_index()
-    final_counts.columns = ['Pays', 'Nombre de films']
-    
+    target = ['US', 'FR', 'GB', 'CA']
+    df_countries['grouped'] = df_countries['production_countries'].apply(lambda x: x if x in target else 'Autres')
     palette_inversee = px.colors.sequential.Viridis[::-1]
-
-    fig4 = px.pie(
-        final_counts, 
-        values='Nombre de films', 
-        names='Pays', 
-        title='Répartition des productions par pays',
-        hole=0.4,
-        color_discrete_sequence=palette_inversee
-    )
+    final_counts = df_countries['grouped'].value_counts().reset_index()
+    final_counts.columns = ['Pays', 'Nombre de films']
+    fig4 = px.pie(final_counts, values='Nombre de films', names='Pays', title='Répartition des productions par pays', hole=0.4,color_discrete_sequence=palette_inversee)
     fig4.update_traces(textposition='inside', textinfo='percent+label')
     st.plotly_chart(fig4, use_container_width=True)
 
-# --- TAB 4 : RÉALISATEURS (TOP 10 BAR CHART) ---
+# TAB 4
 with tab4:
     st.header("🎬 Top 10 Réalisateurs")
     st.markdown("Classement basé sur la **Note Moyenne** (min. 3 films). La couleur indique la popularité (nombre de votes).")
-
     # 1. Préparation des données
     df_dirs = df.explode('directors')
-    df_dirs = df_dirs[df_dirs['directors'] != ""] 
-    
+    df_dirs = df_dirs[df_dirs['directors'] != ""]
     # 2. Calcul des métriques par réalisateur
     stats_dirs = df_dirs.groupby('directors').agg({
         'primaryTitle': 'count',      # Nombre de films
@@ -158,7 +146,7 @@ with tab4:
         orientation='h',
         color='Popularité (Votes)',  # La couleur dépend du nombre de votes
         text='Note Moyenne',         # Affiche la note sur la barre
-        title=f"Top 10 des Réalisateurs (min. {min_films} films)",
+#        title=f"Top 10 des Réalisateurs (min. {min_films} films)",
         color_continuous_scale='Viridis',
         hover_data=['Nb Films', 'Popularité (Votes)'] # Infos supplémentaires au survol
     )
