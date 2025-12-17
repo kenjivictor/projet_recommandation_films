@@ -21,12 +21,25 @@ authenticator = Authenticate(lesDonneesDesComptes, "cookie_name", "cookie_key", 
 if st.session_state.get("authentication_status") is not True:
     st.switch_page("main.py")
 
-with st.sidebar:
-    st.title("Menu")
-    st.write("🎬 Découvrez FilmDataLab")
-    st.divider()
-    authenticator.logout("Déconnexion", "sidebar")
 
+# BARRE LATÉRALE (SIDEBAR) PERSONNALISÉE
+
+with st.sidebar:
+    # 1. Le Titre et la description en PREMIER
+    st.title("FilmDataLab")
+    st.write("Une application de recommandation de films basée sur la data et l'IA.")
+    st.divider()
+    
+    # 2. La Navigation Manuelle (C'est ici qu'on définit l'ordre)
+    # Note: On ne met pas main.py ici, donc il reste caché.
+    st.page_link("pages/1_Accueil.py", label="Accueil", icon="🏠")
+    st.page_link("pages/3_Presentation.py", label="Presentation", icon="📊")
+    st.page_link("pages/4_Recommandation.py", label="Recommandation", icon="🎬")
+    
+    st.divider()
+    
+    # 3. Le bouton de déconnexion en DERNIER
+    authenticator.logout("Déconnexion", "sidebar")
 
 # LOGIQUE & DONNÉES
 
@@ -46,25 +59,20 @@ except FileNotFoundError:
     st.error("Erreur : Fichier 'db/data_2.csv' introuvable.")
     st.stop()
 
-# AFFICHAGE
-
-#initialisation de la bannière et du message d'accueil
-#format de la bannnière
+# AFFICHAGE CONTENU PRINCIPAL
 
 st.markdown("""
     <style>
-        /* Cible le conteneur principal de la page */
+        /* Cible le conteneur principal de la page pour remonter le contenu */
         .block-container {
             /* Met la marge intérieure haute à 0 */
-            padding-top: 0rem !important;
+            padding-top: 0rem !important; 
             padding-bottom: 0rem !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
-
-st.subheader("Films à la une (Cliquez sur une affiche pour voir les détails)")
+st.header("Films à la une (Cliquez sur une affiche pour voir les détails)")
 
 # Films à la une
 df_sorted = df.sort_values(['startYear', 'averageRating'], ascending=False).head(5)
@@ -81,6 +89,7 @@ clicked_index = clickable_images(
 if clicked_index > -1:
     film_id = df_sorted.iloc[clicked_index]['movieId']
     st.session_state.selected_movie_id = film_id
-    st.switch_page("pages/2_Fiche_Film.py")
+    # Redirection vers la page de recommandation
+    st.switch_page("pages/4_Recommandation.py")
 
 utils.background_header_image()
