@@ -2,6 +2,10 @@ import streamlit as st
 from streamlit_authenticator import Authenticate
 import functions.utils as utils
 
+def weight_features(X, weight):
+  return X * weight
+
+
 # =========================================================
 # CONFIGURATION
 # =========================================================
