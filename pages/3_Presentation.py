@@ -103,8 +103,7 @@ with tab1:
 # TAB 2
 with tab2:
     st.header("Analyse des Genres")
-    df_genres = df.explode('genres')
-    counts = df_genres['genres'].value_counts().head(15).reset_index()
+    counts = df['genres'].explode().value_counts().head(15).reset_index()
     counts.columns = ['Genre', 'Nombre']
     fig3 = px.bar(counts, x='Nombre', y='Genre', orientation='h', title="Top 15 Genres", color='Nombre', color_continuous_scale='Viridis_r')
     fig3.update_layout(yaxis=dict(autorange="reversed"))
@@ -113,12 +112,10 @@ with tab2:
 # TAB 3
 with tab3:
     st.header("🌍 Origine Géographique")
-    df_countries = df.explode('production_countries')
-    target = ['US', 'FR', 'GB', 'CA']
-    df_countries['grouped'] = df_countries['production_countries'].apply(lambda x: x if x in target else 'Autres')
+    pays_counts = df['production_countries'].explode().value_counts().reset_index()
+    autres_pays = pd.DataFrame({'production_countries':['Autres'], 'count': [pays_counts.loc[5:]['count'].sum()]})
+    final_counts = pd.concat([pays_counts.loc[0:4], autres_pays], ignore_index=True).rename(columns={'production_countries': 'Pays', 'count':'Nombre de films'})
     palette_inversee = px.colors.sequential.Viridis[::-1]
-    final_counts = df_countries['grouped'].value_counts().reset_index()
-    final_counts.columns = ['Pays', 'Nombre de films']
     fig4 = px.pie(final_counts, values='Nombre de films', names='Pays', title='Répartition des productions par pays', hole=0.4,color_discrete_sequence=palette_inversee)
     fig4.update_traces(textposition='inside', textinfo='percent+label')
     st.plotly_chart(fig4, use_container_width=True)
@@ -166,4 +163,4 @@ with tab4:
     
     st.plotly_chart(fig5, use_container_width=True)
     
-    utils.background_header_image()
+utils.background_header_image()
