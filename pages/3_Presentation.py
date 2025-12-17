@@ -7,7 +7,7 @@ import plotly.express as px
 from streamlit_authenticator import Authenticate
 import functions.utils as utils
 
-st.set_page_config(page_title="Visus", layout="wide")
+st.set_page_config(page_title="Presentation", layout="wide")
 
 # AUTHENTIFICATION & SÉCURITÉ
 
@@ -24,9 +24,19 @@ if st.session_state.get("authentication_status") is not True:
     st.switch_page("main.py")
 
 with st.sidebar:
-    st.title("Menu")
-    st.write("🎬 Découvrez FilmDataLab")
+    # 1. Le Titre et la description
+    st.title("FilmDataLab")
+    st.write("Une application de recommandation de films basée sur la data et l'IA.")
     st.divider()
+    
+    # 2. La Navigation Manuelle Identique à l'accueil
+    st.page_link("pages/1_Accueil.py", label="Accueil", icon="🏠")
+    st.page_link("pages/3_Presentation.py", label="Presentation", icon="📊")
+    st.page_link("pages/4_Recommandation.py", label="Recommandation", icon="🎬")
+    
+    st.divider()
+    
+    # 3. Le bouton de déconnexion
     authenticator.logout("Déconnexion", "sidebar")
 
 
@@ -43,10 +53,10 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
+#st.markdown("<h1 style='text-align: center;'>Une application de recommandation de films basée sur la data et l'IA.</h1>", unsafe_allow_html=True)
         
 
-st.header("Dashboard Analytique : FilmDataLab")
+st.header("Dashboard Analytique :")
 sns.set_theme(style="darkgrid")
 
 def load_data():

@@ -1,3 +1,7 @@
+[client]
+#on cache la sidebar de navigation
+showSidebarNavigation = false
+
 [theme]
 # Couleur primaire (boutons, liens, sélections)
 primaryColor = "#FFFFFF"
@@ -13,7 +17,6 @@ textColor = "#FFFFFF"
 
 # Police par défaut
 font = "sans serif"
-
 
 [theme.sidebar]
 # Couleur primaire (boutons, liens, sélections)
