@@ -1,6 +1,12 @@
 import streamlit as st
 from streamlit_authenticator import Authenticate
 import functions.utils as utils
+from fonction_ml import (
+    weight_text,
+    weight_names,
+    weight_year,
+    weight_numbers
+)
 
 
 # =========================================================

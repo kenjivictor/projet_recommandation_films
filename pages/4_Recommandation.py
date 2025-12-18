@@ -4,7 +4,6 @@ from streamlit_authenticator import Authenticate
 from functions import utils as utils
 from functions import  test as test
 import joblib
-from pages.fonction_ml import weight_features
 
 # Assurez-vous que le fichier functions.py existe bien dans le dossier racine
 try:

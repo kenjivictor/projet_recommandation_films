@@ -14,6 +14,12 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import NearestNeighbors
 import joblib
+from fonction_ml import (
+    weight_text,
+    weight_names,
+    weight_year,
+    weight_numbers
+)
 
 # récupération dataframe
 df = pd.read_csv("db/data_2.csv")
@@ -88,29 +94,29 @@ from sklearn.preprocessing import FunctionTransformer     # rend utilisable n'im
 
 # Créer un transformateur personnalisé pour pondérer les features
 
-def weight_features(X, weight):
-  return X * weight
+
+
 
 preprocessor = ColumnTransformer(
     transformers=[
         ("text", Pipeline([
             ("tfidf", TfidfVectorizer(max_features = 2000, ngram_range = (1,2))),
-            ("weight", FunctionTransformer(weight_features, kw_args={"weight": 2}))
+            ("weight", FunctionTransformer(weight_text))
         ]), "full_text"),
 
         ("names", Pipeline([
             ("ohe", OneHotEncoder(handle_unknown="ignore", max_categories=1500)),
-            ("weight", FunctionTransformer(weight_features, kw_args={"weight": 1}))
+            ("weight", FunctionTransformer(weight_names))
         ]), ["actors","directors","writers"]),
 
         ("Number", Pipeline([
             ("scaler", StandardScaler()),
-            ("weight", FunctionTransformer(weight_features, kw_args={"weight": 0.2}))
+            ("weight", FunctionTransformer(weight_year))
         ]), ['startYear']),
 
         ("Numbers", Pipeline([
             ("scaler", StandardScaler()),
-            ("weight", FunctionTransformer(weight_features, kw_args={"weight": 1}))
+            ("weight", FunctionTransformer(weight_numbers))
         ]), ['averageRating',"numVotes"])
     ]
 )
