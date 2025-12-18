@@ -35,6 +35,8 @@ with st.sidebar:
     st.page_link("pages/1_Accueil.py", label="Accueil", icon="🏠")
     st.page_link("pages/3_Presentation.py", label="Presentation", icon="📊")
     st.page_link("pages/4_Recommandation.py", label="Recommandation", icon="🎬")
+    st.page_link("pages/5_Recherche.py", label="Recherche", icon="🎞️")
+    
 
     st.divider()
 
