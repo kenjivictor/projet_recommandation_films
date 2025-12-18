@@ -61,3 +61,9 @@ def background_header_image():
     </style>
     '''% (get_base64_file("pages/images/banner.png"), size) 
     st.markdown(page_element, unsafe_allow_html=True)
+
+# Récupération de la dataframe features
+
+def weight_features(X, weight):
+  return X * weight
+

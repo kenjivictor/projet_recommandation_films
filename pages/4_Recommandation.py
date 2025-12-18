@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 from streamlit_authenticator import Authenticate
-import functions.utils as utils
+from functions import utils as utils
+from functions import  test as test
+import joblib
+
 # Assurez-vous que le fichier functions.py existe bien dans le dossier racine
 try:
     from functions import movie_frame as mf
@@ -65,6 +68,8 @@ st.write("Entrez un film que vous aimez pour obtenir des recommandations.")
 # Chargement
 try:
     df = pd.read_csv("db/data_2.csv")
+# Chargement des features (nécessaire pour le ML)
+    X = pd.read_csv("db/Features.csv")
 except:
     st.error("Fichier data introuvable")
     st.stop()
@@ -114,10 +119,14 @@ if chosen_movie:
         chosen_poster = subset["poster_path"].iloc[0]
         index_chosen = subset.index[0]
 
+        # import du ML
+        recommandation = test.recuperation_index(index_chosen)
+        
+
         # Simulation ML (Random)
-        sample = df.sample(6)
-        list_index = list(sample.index)
-        rec_image = list(sample["poster_path"])
+
+        list_index = list(recommandation[1:7])
+        rec_image = df["poster_path"].iloc[list_index].to_list()
 
         c1, c2 = st.columns([2, 3])
         c1.write("**Votre choix**")
