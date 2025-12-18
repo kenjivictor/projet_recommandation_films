@@ -74,6 +74,14 @@ except:
     st.error("Fichier data introuvable")
     st.stop()
 
+# définition de la fenetre pop-up
+@st.dialog("Détails", width="medium")
+def show_movie(id):
+    if mf:
+        mf.movie_frame(id)
+    else:
+        st.warning("Une erreur s'est produite. Veuillez réessayer.") #Module 'functions.movie_frame' introuvable.
+
 # =========================================================
 # Interface & Gestion de la pré-sélection
 # =========================================================
@@ -137,31 +145,30 @@ if chosen_movie:
         # Film Choisi
         with col0:
             if pd.notna(chosen_poster):
-                st.image(f"https://image.tmdb.org/t/p/w500{chosen_poster}", use_container_width=True)
-            if st.button('Détails Principal', key="btn_main"):
+                st.image(f"https://image.tmdb.org/t/p/w500{chosen_poster}", width="stretch")
+            if st.button('Détails Principal', key="btn_main", width="stretch"):
                 id_details = index_chosen
 
+        # style des images pour qu'elles aient la même taille
+        st.markdown("""
+            <style>
+            img {
+                width: 100%;
+                aspect-ratio: 3 / 4;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+        
+        
         # Recommandations (Grille 2x3)
-        with colA:
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[0]}", use_container_width=True)
-            if st.button('Détails 1', key="b1"): id_details = list_index[0]
-
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[3]}", use_container_width=True)
-            if st.button('Détails 4', key="b4"): id_details = list_index[3]
-
-        with colB:
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[1]}", use_container_width=True)
-            if st.button('Détails 2', key="b2"): id_details = list_index[1]
-
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[4]}", use_container_width=True)
-            if st.button('Détails 5', key="b5"): id_details = list_index[4]
-
-        with colC:
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[2]}", use_container_width=True)
-            if st.button('Détails 3', key="b3"): id_details = list_index[2]
-
-            st.image(f"https://image.tmdb.org/t/p/w500{rec_image[5]}", use_container_width=True)
-            if st.button('Détails 6', key="b6"): id_details = list_index[5]
+        nb = 0
+        for i in range(1,3):
+            for col in [colA, colB, colC]:
+                with col:
+                    st.image(f"https://image.tmdb.org/t/p/w500{rec_image[nb]}", width="stretch")
+                    if st.button(f'Détails {nb+1}', key=f"b{nb}", width="stretch"): id_details = list_index[nb]
+                nb +=1
+        
 
     except Exception as e:
         st.error(f"Erreur lors de la génération : {e}")
@@ -170,10 +177,6 @@ else:
 
 # Affichage des détails si cliqué
 if id_details is not None:
-    st.divider()
-    if mf:
-        mf.movie_frame(id_details)
-    else:
-        st.warning("Module 'functions.movie_frame' introuvable.")
+    show_movie(id_details)
 
 utils.background_header_image()
