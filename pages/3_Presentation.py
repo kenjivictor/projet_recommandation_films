@@ -33,13 +33,18 @@ with st.sidebar:
     st.page_link("pages/1_Accueil.py", label="Accueil", icon="🏠")
     st.page_link("pages/3_Presentation.py", label="Presentation", icon="📊")
     st.page_link("pages/4_Recommandation.py", label="Recommandation", icon="🎬")
+    st.page_link("pages/5_Recherche.py", label="Recherche", icon="🎞️")
     
     st.divider()
     
     # 3. Le bouton de déconnexion
     authenticator.logout("Déconnexion", "sidebar")
 
-
+# Nettoyage systématique dès qu'on navigue ailleurs que sur Recommandation
+if "selected_movie_id" in st.session_state and st.session_state.selected_movie_id is not None:
+    # On ne nettoie que si on n'est pas en train de cliquer sur une image à cet instant précis
+    if st.session_state.get("une", -1) == -1 and st.session_state.get("sample", -1) == -1:
+        st.session_state.selected_movie_id = None
 # CONTENU PAGE
 
 st.markdown("""
