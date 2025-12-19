@@ -73,10 +73,87 @@ except FileNotFoundError:
     st.error("❌ Fichier 'data_2.csv' introuvable.")
     st.stop()
 
-tab1, tab2, tab3, tab4 = st.tabs(["📈 Stats Globales", "🎭 Genres", "🌍 Origine", "🎬 Réalisateurs"])
+tab1, tab2, tab3, tab4 , tab5 = st.tabs(["A propos", "📈 Stats Globales", "🎭 Genres", "🌍 Origine", "🎬 Réalisateurs"])
 
 # TAB 1
 with tab1:
+    st.header("ℹ️ À propos de FilmDataLab")
+    
+    # --- 1. LE PROJET ---
+    st.subheader("🎬 Le Projet")
+    st.markdown("""
+    **Nantes Cinéma** lance son offensive numérique avec **FilmDataLab**, une application web innovante destinée à ses spectateurs de Loire-Atlantique.
+    
+    L'objectif est double :
+    1.  **Digitaliser l'offre** pour attirer un public plus jeune (Gen Z et Millennials).
+    2.  **Personnaliser l'expérience** grâce à un moteur de recommandation intelligent capable de suggérer le "film parfait" en fonction des goûts de chacun.
+    """)
+    
+    st.info("💡 *\"Où chaque film trouve son audience\"* - La promesse FilmDataLab.")
+
+    st.divider()
+
+    # --- 2. MÉTHODOLOGIE TECHNIQUE (NOUVEAU) ---
+    st.subheader("⚙️ Méthodologie & Technique")
+    st.markdown("""
+    Notre approche s'est déroulée en trois phases clés pour garantir la pertinence des suggestions :
+    
+    #### 1️⃣ Étude de Marché & Ciblage
+    Avant de coder, nous avons analysé les données démographiques locales (Loire-Atlantique).
+    * **Cible Prioritaire :** Les 15-30 ans (représentant 1/3 de la population).
+    * **Préférences Identifiées :** Forte appétence pour la **Comédie** et l'**Animation**.
+    * **Format :** Priorité aux contenus en **Version Française (VF)**.
+    
+    #### 2️⃣ Préparation de la Donnée (Data Engineering)
+    Nous avons exploité une base de données cinéma complète et l'avons nettoyée pour en extraire la valeur.
+    * **Volume :** 5 644 Films, 31 000+ Acteurs, 3 500+ Réalisateurs.
+    * **Traitement :** Nettoyage des valeurs manquantes, formatage des genres et filtrage des films pertinents.
+    
+    #### 3️⃣ Le Moteur de Recommandation (Machine Learning)
+    L'intelligence de l'application repose sur un système de filtrage qui croise :
+    * **Le contenu :** Similitude entre les films (genres, mots-clés, réalisateurs).
+    * **La popularité :** Pondération par la note moyenne et le nombre de votes.
+    """)
+    
+    st.divider()
+    
+    # --- 3. L'ÉQUIPE ---
+    st.subheader("👥 L'Équipe Data")
+    
+    st.write("Ce projet a été réalisé pour **Nantes Cinéma** par une équipe de passionnés :")
+    
+    col_team1, col_team2, col_team3, col_team4 = st.columns(4)
+    
+    # Membre 1
+    with col_team1:
+        st.markdown("### 👩‍💻") 
+        st.markdown("Carole Pons-Bachmann") 
+        st.caption("Wilder Data Analyst") 
+        st.markdown("[LinkedIn](https://www.linkedin.com/in/carole-pons-bachmann/)")
+
+    # Membre 2
+    with col_team2:
+        st.markdown("### 👩‍💻")
+        st.markdown("Kenji Victor")
+        st.caption("Wilder Data Analyst")
+        st.markdown("[LinkedIn](https://www.linkedin.com/in/kenji-victor/)")
+
+    # Membre 3
+    with col_team3:
+        st.markdown("### 👩‍💻")
+        st.markdown("Helena Steyaert")
+        st.caption("Wilder Data Analyst")
+        st.markdown("[LinkedIn](https://www.linkedin.com/in/helena-steyaert/)")
+
+    # Membre 4
+    with col_team4:
+        st.markdown("### 🧑‍💻")
+        st.markdown("Naoufel Kaouachi")
+        st.caption("Wilder Data Analyst")
+        st.markdown("[LinkedIn](https://www.linkedin.com/in/naoufelkaouachi/)")
+
+
+with tab2:
     st.subheader("Vue d'ensemble")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Films", len(df))
@@ -100,8 +177,8 @@ with tab1:
         ax2.set_ylabel("")
         st.pyplot(fig2)
 
-# TAB 2
-with tab2:
+# TAB 3
+with tab3:
     st.header("Analyse des Genres")
     counts = df['genres'].explode().value_counts().head(15).reset_index()
     counts.columns = ['Genre', 'Nombre']
@@ -109,8 +186,8 @@ with tab2:
     fig3.update_layout(yaxis=dict(autorange="reversed"))
     st.plotly_chart(fig3, use_container_width=True)
 
-# TAB 3
-with tab3:
+# TAB 4
+with tab4:
     st.header("🌍 Origine Géographique")
     pays_counts = df['production_countries'].explode().value_counts().reset_index()
     autres_pays = pd.DataFrame({'production_countries':['Autres'], 'count': [pays_counts.loc[5:]['count'].sum()]})
@@ -120,8 +197,8 @@ with tab3:
     fig4.update_traces(textposition='inside', textinfo='percent+label')
     st.plotly_chart(fig4, use_container_width=True)
 
-# TAB 4
-with tab4:
+# TAB 5
+with tab5:
     st.header("🎬 Top 10 Réalisateurs")
     st.markdown("Classement basé sur la **Note Moyenne** (min. 3 films). La couleur indique la popularité (nombre de votes).")
     # 1. Préparation des données
