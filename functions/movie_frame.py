@@ -55,7 +55,7 @@ def read_overview(movieId):
         url = f"https://api.themoviedb.org/3/movie/{movieId}/translations"
         headers = {
             "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZTRhNmYxMjc1M2ZhNmMxMmIwZmMwMjUzYjVlNjY3ZiIsInN1YiI6IjY1NDEyOWM4MzU4MThmMDBhZGM2YzZhNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NDGx7z7tJWcKpdFU43nTPar8V_i17RwgJjKMWWZ5D9Q"}
+            "Authorization": st.secrets['API_KEY']}
 
         response = requests.get(url, headers=headers)
         
