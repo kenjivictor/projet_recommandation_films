@@ -190,8 +190,14 @@ if df is not False:
 
 if len(df_filtered) >0:
     
-
+    #si on vient tout juste d'arriver sur la page (le formulaire n'a pas été envoyé), on affiche tous les films
+    if st.session_state.filtres["submitted"] == False:
+        # ici, on va "mélanger" les lignes du dataframe (pour ne pas avoir toujours les mêmes films en arrivant sur la page)
+        # ce code fait un sample pur chaque ligne (frac=1) et les retourne dans un ordre différent
+        df_filtered = df_filtered.sample(frac=1).reset_index(drop=True)
     
+    
+    #affichage de la pagination
     pagination_cols = st.columns((3, 1, 1))
     with pagination_cols[2]:
         page_size = st.selectbox("Page Size", options=[20, 50, 100])
@@ -211,19 +217,12 @@ if len(df_filtered) >0:
         st.markdown(f"Page **{current_page}** sur **{total_pages}**")
     
     
-    
+    # on fractionne le dataframe pour afficher les éléments par pages
     start = (current_page - 1) * page_size
     end = start + page_size
     data = df_filtered.iloc[start:end]
     
-    #pages = utils.split_frame(df_filtered, batch_size)
-    #pagination.dataframe(data=pages[current_page - 1], use_container_width=True)
-    #data=pages[current_page - 1]
-    #data.reset_index(drop=True,inplace=True)
     
-    #st.dataframe(data)
-    #st.write(data.iloc[0]['poster_path'])
-    #st.write(data.loc[3]['index'])
     # style des images pour qu'elles aient la même taille
     st.markdown("""
         <style>
