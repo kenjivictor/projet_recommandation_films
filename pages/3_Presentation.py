@@ -45,6 +45,11 @@ if "selected_movie_id" in st.session_state and st.session_state.selected_movie_i
     # On ne nettoie que si on n'est pas en train de cliquer sur une image à cet instant précis
     if st.session_state.get("une", -1) == -1 and st.session_state.get("sample", -1) == -1:
         st.session_state.selected_movie_id = None
+
+# réinitialisation pour l'affichage du df aléatoire de la page de recherche
+st.session_state.has_searched = False
+st.session_state.shuffled_index = None
+
 # CONTENU PAGE
 
 st.markdown("""
