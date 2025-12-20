@@ -50,6 +50,10 @@ if "selected_movie_id" in st.session_state and st.session_state.selected_movie_i
     if st.session_state.get("une", -1) == -1 and st.session_state.get("sample", -1) == -1:
         st.session_state.selected_movie_id = None
 
+# réinitialisation pour l'affichage du df aléatoire de la page de recherche
+st.session_state.has_searched = False
+st.session_state.shuffled_index = None
+
 @st.cache_data
 def load_data():
     # Ajustez le chemin si nécessaire (ex: "../db/data_2.csv")

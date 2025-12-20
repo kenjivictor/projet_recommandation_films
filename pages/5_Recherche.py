@@ -44,8 +44,15 @@ with st.sidebar:
     authenticator.logout("Déconnexion", "sidebar")
 
 # =========================================================
-# CONTENU PAGE
+# INITIALISATIONS
 # =========================================================
+
+# Nettoyage systématique dès qu'on navigue ailleurs que sur Recommandation
+if "selected_movie_id" in st.session_state and st.session_state.selected_movie_id is not None:
+    # On ne nettoie que si on n'est pas en train de cliquer sur une image à cet instant précis
+    if st.session_state.get("une", -1) == -1 and st.session_state.get("sample", -1) == -1:
+        st.session_state.selected_movie_id = None
+
 st.markdown("""
     <style>
         /* Cible le conteneur principal de la page */
@@ -65,26 +72,40 @@ st.write("Choisissez vos critères")
 df = utils.load_data()
 df_filtered = pd.DataFrame([])
 
-id_details = None
+# valeurs par defaut pour le formulaire et la pagination
+DEFAULTS = {
+        # filtres du formulaire
+        "afficher_decenie": False,
+        "decenie_selected": 2000,
+        "genres_selected": [],
+        "actors_selected": [],
+        "pays_selected": [],
+        "titre_selected": "",
+        
+        # pagination
+        "current_page": 1,
+        "page_size": 20,
+        
+        # movieId pour la redirection vers la page de recommandation
+        "selected_movie_id": None,
+        
+        # pour le "mélange" du dataframe lorsque l'utilisateur arrive sur la page
+        "has_searched": False,
+        "shuffled_index": None,
+    }
 
-#initialisation des filtres
 
-st.session_state.setdefault("filtres", {
-    "submitted" : False,
-    "afficher_decenie": False,
-    "decenie_selected": 2000,
-    "genres_selected": [],
-    "actors_selected": [],
-    "pays_selected": [],
-    "titre_selected": "",
-})
+# enregistrement des valeurs par defaut (filtres + pagination) dans le session_state
+for k, v in DEFAULTS.items():
+    st.session_state.setdefault(k, v)
 
-#initialisation de la page en cours
-st.session_state.setdefault("current_page", 1)
-st.session_state.setdefault("page_size", 20)
 
-    
-    
+#fonction pour effacer les données du formulaire sauvagardées dans le session_state
+def reset_form():
+    for k in DEFAULTS: 
+        st.session_state.pop(k, None)
+
+
 # définition de la fenetre pop-up
 @st.dialog("Détails", width="medium")
 def show_movie(id):
@@ -102,54 +123,73 @@ def show_movie(id):
 
 if df is not False:
     
+    #si on vient tout juste d'arriver sur la page (le formulaire n'a pas été envoyé), on affiche tous les films dans un ordre aléatoire
+    if not st.session_state.has_searched:
+        if st.session_state.shuffled_index is None:
+            # ici, on va "mélanger" les lignes du dataframe (pour ne pas avoir toujours les mêmes films en arrivant sur la page)
+            # ce code fait un sample pur chaque ligne (frac=1) et les retourne les index
+            st.session_state.shuffled_index = (df.sample(frac=1).index.to_list())
     
+        df = df.loc[st.session_state.shuffled_index]
     
-    afficher_decenie = st.toggle("Recherche par décénie", value=st.session_state.filtres["afficher_decenie"])
+    #calcul des décénies dans le df
     df["Decenie"] = (df["startYear"] // 10) * 10
+        
+    # affichage du boouton de réinitialisation
+    if st.button("🔄 Réinitialiser"):
+        reset_form()
+        st.rerun()
+    
+    
+    
+    # **** affichage des éléments de formulaire *****
+    st.toggle("Recherche par décénie", key="afficher_decenie")
     
     
     with st.form("formulaire_filtres"):
-        if afficher_decenie:
-            decenie_selected = st.select_slider(
-                "Décénie",
-                df['Decenie'].explode().value_counts().reset_index()['Decenie'].sort_values().to_list(),
-                value=st.session_state.filtres["decenie_selected"],
-            )
-        else:
-            decenie_selected = None
-        genres_selected = st.multiselect(
-            "Genres",
-            df['genres'].explode().value_counts().reset_index()['genres'].to_list(),
-            default=st.session_state.filtres["genres_selected"]
-        )
-        actors_selected = st.multiselect(
-            "Acteurs",
-            df['actors'].explode().value_counts().reset_index()['actors'].to_list(),
-            default=st.session_state.filtres["actors_selected"]
-        )
-        pays_selected = st.multiselect(
-            "Pays d'origine",
-            df['production_countries'].explode().value_counts().reset_index()['production_countries'].to_list(),
-            default=st.session_state.filtres["pays_selected"]
-        )
-        #recherche dnas le titre ou par mot clef
-        titre_selected = st.text_input("Recherche par mots dans le titre", value=st.session_state.filtres["titre_selected"])
 
-        submit = st.form_submit_button("Lancer la recherche")
+        cols = st.columns(3)
+        
+        with cols[0]:
+            st.text_input("Recherche par mots dans le titre", key="titre_selected")
+            if st.session_state.afficher_decenie:
+                st.select_slider(
+                    "Décénie",
+                    df['Decenie'].explode().value_counts().reset_index()['Decenie'].sort_values().to_list(),
+                    key="decenie_selected",
+                )
+            
+        with cols[1]:
+        
+            st.multiselect(
+                "Genres",
+                df['genres'].explode().value_counts().reset_index()['genres'].to_list(),
+                key="genres_selected",
+            )
+            st.multiselect(
+                "Acteurs",
+                df['actors'].explode().value_counts().reset_index()['actors'].to_list(),
+                key="actors_selected",
+            )
+        
+        with cols[2]:
+            st.multiselect(
+                "Pays d'origine",
+                df['production_countries'].explode().value_counts().reset_index()['production_countries'].to_list(),
+                key="pays_selected",
+            )
+            
+        
+
+        submit = st.form_submit_button("🔎 Lancer la recherche", width="stretch")
+        
 
     if submit:
-        
-        #on enregistre les filtres
-        st.session_state.filtres = {
-            "submitted" : True,
-            "afficher_decenie": afficher_decenie,
-            "decenie_selected": decenie_selected,
-            "genres_selected": genres_selected,
-            "actors_selected": actors_selected,
-            "pays_selected": pays_selected,
-            "titre_selected": titre_selected,
-        }
+        #on enregistre la page courante
         st.session_state.current_page = 1
+        
+        #on enregistre le fait qu'une recherche a été lancée
+        st.session_state.has_searched = True
 
 
 
@@ -158,23 +198,23 @@ if df is not False:
     #on crée une série vide à True qui a les mêmes index que notre dataframe
     mask = pd.Series(True, index=df.index)
 
-    if afficher_decenie and decenie_selected is not None:
-        mask &= df["startYear"].between(decenie_selected, decenie_selected+9)
+    if st.session_state.afficher_decenie and st.session_state.decenie_selected is not None:
+        mask &= df["startYear"].between(st.session_state.decenie_selected, st.session_state.decenie_selected+9)
 
 
-    if genres_selected:
-        mask &= df["genres"].apply(lambda x: any(t in x for t in genres_selected))
+    if st.session_state.genres_selected:
+        mask &= df["genres"].apply(lambda x: any(t in x for t in st.session_state.genres_selected))
 
-    if actors_selected:
-        mask &= df["actors"].apply(lambda x: any(t in x for t in actors_selected))
+    if st.session_state.actors_selected:
+        mask &= df["actors"].apply(lambda x: any(t in x for t in st.session_state.actors_selected))
 
-    if pays_selected:
-        mask &= df["production_countries"].apply(lambda x: any(t in x for t in pays_selected))
+    if st.session_state.pays_selected:
+        mask &= df["production_countries"].apply(lambda x: any(t in x for t in st.session_state.pays_selected))
 
     # recherche par titre (recherche partielle, insensible à la casse)
-    if titre_selected:
+    if st.session_state.titre_selected:
         #split par mot pour créer un filtre avec regex
-        pattern = '|'.join(re.findall(r'\w+', titre_selected))
+        pattern = '|'.join(re.findall(r'\w+', st.session_state.titre_selected))
         
         #on choisit les colonnes sur lesquelles chercher
         mask &= df[['primaryTitle', 'originalTitle']].astype(str).agg(" ".join, axis=1).str.contains(pattern, case=False, regex=True)
@@ -186,15 +226,11 @@ if df is not False:
         st.write("Aucun résultat trouvé. Veuillez modifier vos critères.")
 
 
-
+# =========================================================
+# Affichage des résultats
+# =========================================================
 
 if len(df_filtered) >0:
-    
-    #si on vient tout juste d'arriver sur la page (le formulaire n'a pas été envoyé), on affiche tous les films
-    if st.session_state.filtres["submitted"] == False:
-        # ici, on va "mélanger" les lignes du dataframe (pour ne pas avoir toujours les mêmes films en arrivant sur la page)
-        # ce code fait un sample pur chaque ligne (frac=1) et les retourne dans un ordre différent
-        df_filtered = df_filtered.sample(frac=1).reset_index(drop=True)
     
     
     #affichage de la pagination
@@ -237,20 +273,23 @@ if len(df_filtered) >0:
     #affichage de toutes les images (par lignes de 5)
     nb_cols = 5
     cols = st.columns(nb_cols)
-    nb_ligne = (len(data) + nb_cols - 1) // nb_cols
-    nb_ligne = max(1, nb_cols)
-    nb = 0
-    for i in range(nb_ligne):
-        for col in cols:
-            with col:
-                if nb < len(data):
-                    st.image(f"https://image.tmdb.org/t/p/w500{data.iloc[nb]['poster_path']}", width="stretch")
-                    if st.button(f'Détails {nb+1}', key=f"b{nb}", width="stretch"): id_details = data.iloc[[nb]].index[0]
-            nb +=1
     
-# Affichage des détails si cliqué
-if id_details is not None:
-    show_movie(id_details)
+    for i, row in enumerate(data.itertuples()):
+        
+        with cols[i % nb_cols]:
+            
+            st.image(f"https://image.tmdb.org/t/p/w500{row.poster_path}", width="stretch")
+            
+            col_img_btn = st.columns(2)
+            
+            with col_img_btn[0]:
+                if st.button(f'Détails', key=f"d{i}", width="stretch"):
+                    show_movie(row.Index)
+            
+            with col_img_btn[1]:
+                if st.button(f'Recommander', key=f"r{i}", width="stretch"):
+                    st.session_state.selected_movie_id = row.movieId
+                    st.switch_page("pages/4_Recommandation.py")
 
 
 utils.background_header_image()
