@@ -45,6 +45,11 @@ with st.sidebar:
     # 3. Le bouton de déconnexion
     authenticator.logout("Déconnexion", "sidebar")
 
+
+# réinitialisation pour l'affichage du df aléatoire de la page de recherche
+st.session_state.has_searched = False
+st.session_state.shuffled_index = None
+
 # =========================================================
 # CONTENU PAGE
 # =========================================================
