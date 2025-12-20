@@ -152,7 +152,7 @@ if chosen_movie:
         with col0:
             if pd.notna(chosen_poster):
                 st.image(f"https://image.tmdb.org/t/p/w500{chosen_poster}", width="stretch")
-            if st.button('Détails Principal', key="btn_main", width="stretch"):
+            if st.button('Détails', key="btn_main", width="stretch"):
                 id_details = index_chosen
 
         # style des images pour qu'elles aient la même taille
@@ -172,7 +172,7 @@ if chosen_movie:
             for col in [colA, colB, colC]:
                 with col:
                     st.image(f"https://image.tmdb.org/t/p/w500{rec_image[nb]}", width="stretch")
-                    if st.button(f'Détails {nb+1}', key=f"b{nb}", width="stretch"): id_details = list_index[nb]
+                    if st.button(f'Détails', key=f"b{nb}", width="stretch"): id_details = list_index[nb]
                 nb +=1
         
 
