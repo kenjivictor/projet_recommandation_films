@@ -83,7 +83,7 @@ except FileNotFoundError:
     st.error("❌ Fichier 'data_2.csv' introuvable.")
     st.stop()
 
-tab1, tab2, tab3, tab4 , tab5 = st.tabs(["A propos", "📈 Stats Globales", "🎭 Genres", "🌍 Origine", "🎬 Réalisateurs"])
+tab1, tab2, tab3, tab4 , tab5 = st.tabs(["ℹ️ A propos", "📈 Stats Globales", "🎭 Genres", "🌍 Origine", "🎬 Réalisateurs"])
 
 # TAB 1
 with tab1:
@@ -164,7 +164,7 @@ with tab1:
 
 
 with tab2:
-    st.subheader("Vue d'ensemble")
+    st.header("📈 Vue d'ensemble")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Films", len(df))
     c2.metric("Note Moy.", f"{round(df['averageRating'].mean(), 1)}/10")
@@ -173,23 +173,23 @@ with tab2:
     st.divider()
     c_g1, c_g2 = st.columns(2)
     with c_g1:
-        st.subheader("Chronologie")
+        st.subheader("Années de sorties")
         fig, ax = plt.subplots(figsize=(6, 4))
         sns.histplot(df['startYear'], bins=30, kde=True, color="#5ec962", ax=ax, linewidth=0)
-        ax.set_ylabel("")
+        ax.set_ylabel("Nombre de films")
         ax.set_xlabel("Année")
         st.pyplot(fig)
     with c_g2:
         st.subheader("Durées")
         fig2, ax2 = plt.subplots(figsize=(6, 4))
         sns.histplot(df['runtimeMinutes'], bins=30, color="#fde725", ax=ax2, linewidth=0)
-        ax2.set_xlim(0, 200)
-        ax2.set_ylabel("")
+        ax2.set_ylabel("Nombre de films")
+        ax2.set_xlabel("Durée (en minutes)")
         st.pyplot(fig2)
 
 # TAB 3
 with tab3:
-    st.header("Analyse des Genres")
+    st.header("🎭 Analyse des Genres")
     counts = df['genres'].explode().value_counts().head(15).reset_index()
     counts.columns = ['Genre', 'Nombre']
     fig3 = px.bar(counts, x='Nombre', y='Genre', orientation='h', title="Top 15 Genres", color='Nombre', color_continuous_scale='Viridis_r')

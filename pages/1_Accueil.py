@@ -80,7 +80,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🚀 Films à la une !")
+st.header("🚀 Films à la une !")
 st.subheader("Cliquez sur une affiche pour voir les détails")
 # Films à la une
 #######################
